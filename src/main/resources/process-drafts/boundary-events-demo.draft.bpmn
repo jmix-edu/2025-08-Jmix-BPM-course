@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:jmix="http://jmix.io/schema/bpm/bpmn" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.flowable.org/processdef" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL http://www.omg.org/spec/BPMN/2.0/20100501/BPMN20.xsd">
+  <process id="boundary-events-demo" name="Boundary events demo" isExecutable="true">
+    <startEvent id="startEvent1">
+      <outgoing>Flow_1rits8b</outgoing>
+    </startEvent>
+    <sequenceFlow id="Flow_1rits8b" sourceRef="startEvent1" targetRef="Activity_0iz5e4q" />
+    <sequenceFlow id="Flow_1vsl92h" sourceRef="Activity_0iz5e4q" targetRef="Activity_1ofeja0" />
+    <boundaryEvent id="Event_1hnzh6r" cancelActivity="false" attachedToRef="Activity_0iz5e4q">
+      <outgoing>Flow_0quvm0a</outgoing>
+      <timerEventDefinition id="TimerEventDefinition_0wqz3b0">
+        <timeCycle xsi:type="tFormalExpression">R5/PT10S</timeCycle>
+      </timerEventDefinition>
+    </boundaryEvent>
+    <boundaryEvent id="Event_0jhzqqy" attachedToRef="Activity_0iz5e4q">
+      <outgoing>Flow_13uaobu</outgoing>
+      <timerEventDefinition id="TimerEventDefinition_1lju9si">
+        <timeDuration xsi:type="tFormalExpression">PT30S</timeDuration>
+      </timerEventDefinition>
+    </boundaryEvent>
+    <sequenceFlow id="Flow_0quvm0a" sourceRef="Event_1hnzh6r" targetRef="Activity_15q8e4i" />
+    <sequenceFlow id="Flow_13uaobu" sourceRef="Event_0jhzqqy" targetRef="Activity_05067po" />
+    <userTask id="Activity_0iz5e4q">
+      <incoming>Flow_1rits8b</incoming>
+      <outgoing>Flow_1vsl92h</outgoing>
+    </userTask>
+    <userTask id="Activity_1ofeja0">
+      <incoming>Flow_1vsl92h</incoming>
+      <outgoing>Flow_0ukl9qg</outgoing>
+    </userTask>
+    <endEvent id="Event_1uqlmb6">
+      <incoming>Flow_1yjdgbv</incoming>
+    </endEvent>
+    <sequenceFlow id="Flow_1yjdgbv" sourceRef="Activity_15q8e4i" targetRef="Event_1uqlmb6">
+      <extensionElements>
+        <jmix:conditionDetails conditionSource="userTaskOutcome" />
+      </extensionElements>
+    </sequenceFlow>
+    <endEvent id="Event_0mxmcjj">
+      <incoming>Flow_0ukl9qg</incoming>
+    </endEvent>
+    <sequenceFlow id="Flow_0ukl9qg" sourceRef="Activity_1ofeja0" targetRef="Event_0mxmcjj">
+      <extensionElements>
+        <jmix:conditionDetails conditionSource="userTaskOutcome" />
+      </extensionElements>
+    </sequenceFlow>
+    <endEvent id="Event_1rqy67h">
+      <incoming>Flow_06ztukx</incoming>
+    </endEvent>
+    <sequenceFlow id="Flow_06ztukx" sourceRef="Activity_05067po" targetRef="Event_1rqy67h">
+      <extensionElements>
+        <jmix:conditionDetails conditionSource="userTaskOutcome" />
+      </extensionElements>
+    </sequenceFlow>
+    <scriptTask id="Activity_15q8e4i" scriptFormat="groovy">
+      <incoming>Flow_0quvm0a</incoming>
+      <outgoing>Flow_1yjdgbv</outgoing>
+      <script>def current = new Date()
+println "Reminder task: $current"</script>
+    </scriptTask>
+    <scriptTask id="Activity_05067po" scriptFormat="groovy">
+      <incoming>Flow_13uaobu</incoming>
+      <outgoing>Flow_06ztukx</outgoing>
+      <script>def current = new Date()
+println "Interruption task: $current"</script>
+    </scriptTask>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_process">
+    <bpmndi:BPMNPlane id="BPMNPlane_process" bpmnElement="boundary-events-demo">
+      <bpmndi:BPMNShape id="BPMNShape_startEvent1" bpmnElement="startEvent1">
+        <omgdc:Bounds x="150" y="150" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1bwjmx8_di" bpmnElement="Activity_0iz5e4q">
+        <omgdc:Bounds x="240" y="128" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1ghult5_di" bpmnElement="Activity_1ofeja0">
+        <omgdc:Bounds x="400" y="128" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1uqlmb6_di" bpmnElement="Event_1uqlmb6">
+        <omgdc:Bounds x="532" y="22" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0mxmcjj_di" bpmnElement="Event_0mxmcjj">
+        <omgdc:Bounds x="562" y="150" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1rqy67h_di" bpmnElement="Event_1rqy67h">
+        <omgdc:Bounds x="532" y="272" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0uvbjc8_di" bpmnElement="Activity_15q8e4i">
+        <omgdc:Bounds x="380" y="0" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_06oefef_di" bpmnElement="Activity_05067po">
+        <omgdc:Bounds x="380" y="250" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0p1o2e6_di" bpmnElement="Event_0jhzqqy">
+        <omgdc:Bounds x="292" y="190" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0pv9yr3_di" bpmnElement="Event_1hnzh6r">
+        <omgdc:Bounds x="292" y="110" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1rits8b_di" bpmnElement="Flow_1rits8b">
+        <omgdi:waypoint x="186" y="168" />
+        <omgdi:waypoint x="240" y="168" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1vsl92h_di" bpmnElement="Flow_1vsl92h">
+        <omgdi:waypoint x="340" y="168" />
+        <omgdi:waypoint x="400" y="168" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0quvm0a_di" bpmnElement="Flow_0quvm0a">
+        <omgdi:waypoint x="310" y="110" />
+        <omgdi:waypoint x="310" y="40" />
+        <omgdi:waypoint x="380" y="40" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_13uaobu_di" bpmnElement="Flow_13uaobu">
+        <omgdi:waypoint x="310" y="226" />
+        <omgdi:waypoint x="310" y="290" />
+        <omgdi:waypoint x="380" y="290" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1yjdgbv_di" bpmnElement="Flow_1yjdgbv">
+        <omgdi:waypoint x="480" y="40" />
+        <omgdi:waypoint x="532" y="40" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ukl9qg_di" bpmnElement="Flow_0ukl9qg">
+        <omgdi:waypoint x="500" y="168" />
+        <omgdi:waypoint x="562" y="168" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_06ztukx_di" bpmnElement="Flow_06ztukx">
+        <omgdi:waypoint x="480" y="290" />
+        <omgdi:waypoint x="532" y="290" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

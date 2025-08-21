@@ -3,6 +3,12 @@
 
     <menu id="application" title="msg://com.company.bpmcourse/menu.application.title" opened="true">
         <item view="User.list" title="msg://com.company.bpmcourse.view.user/UserListView.title"/>
+        <item view="AdvancedTaskListView"
+              title="msg://com.company.bpmcourse.view.advancedtasklist/advancedTaskListView.title"/>
+        <item view="PizzaItem.list" title="msg://com.company.bpmcourse.view.pizzaitem/pizzaItemListView.title"/>
+        <item view="OrderLine.list" title="msg://com.company.bpmcourse.view.orderline/orderLineListView.title"/>
+        <item view="PizzaOrder.list" title="msg://com.company.bpmcourse.view.pizzaorder/pizzaOrderListView.title"/>
+        <item view="Recipe.list" title="msg://com.company.bpmcourse.view.recipe/recipeListView.title"/>
     </menu>
     <menu id="bpm" title="msg://io.jmix.bpmflowui/menu.bpm.title" opened="true">
         <item view="bpm_StartProcess" title="msg://io.jmix.bpmflowui/startProcess.title"/>
@@ -28,6 +34,9 @@
     <menu id="datatools" title="msg://com.company.bpmcourse/menu.datatools.title">
         <item view="datatl_entityInspectorListView"
               title="msg://io.jmix.datatoolsflowui.view.entityinspector/listTitle"/>
+    </menu>
+    <menu id="quartz">
+        <item view="quartz_JobModel.list" title="msg://io.jmix.quartzflowui.view.jobs/jobModelListView.menu"/>
     </menu>
 
 </menu-config>

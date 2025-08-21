@@ -29,6 +29,12 @@ repositories {
 }
 
 dependencies {
+    implementation 'io.jmix.quartz:jmix-quartz-flowui-starter'
+    implementation 'io.jmix.quartz:jmix-quartz-starter'
+
+    implementation 'io.jmix.notifications:jmix-notifications-starter'
+    implementation 'io.jmix.notifications:jmix-notifications-flowui-starter'
+
     implementation 'io.jmix.bpm:jmix-bpm-flowui-starter'
     implementation 'io.jmix.bpm:jmix-bpm-starter'
 
@@ -46,12 +52,13 @@ dependencies {
 
     implementation 'org.springframework.boot:spring-boot-starter-web'
 
-    runtimeOnly 'org.hsqldb:hsqldb'
 
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
     }
     testImplementation 'io.jmix.flowui:jmix-flowui-test-assist'
+    implementation 'org.hsqldb:hsqldb'
+    implementation 'org.postgresql:postgresql'
 }
 
 configurations.implementation {

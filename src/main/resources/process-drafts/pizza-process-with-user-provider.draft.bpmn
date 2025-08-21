@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:flowable="http://flowable.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:jmix="http://jmix.io/schema/bpm/bpmn" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.flowable.org/processdef" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL http://www.omg.org/spec/BPMN/2.0/20100501/BPMN20.xsd">
-  <process id="pizza-process-with-dialogs" name="Pizza process - dialogs" isExecutable="true" flowable:candidateStarterUsers="peter" jmix:candidateStarterUsersValue="peter">
+  <process id="pizza-process-with-user-provider" name="Pizza process - provider" isExecutable="true" flowable:candidateStarterUsers="peter" jmix:candidateStarterUsersValue="peter">
     <startEvent id="startEvent1" name="Feed developer">
       <extensionElements>
         <jmix:formData type="input-dialog" openMode="DIALOG">
@@ -11,12 +11,6 @@
               <jmix:formFieldProperty name="uiComponent" value="comboBox" />
               <jmix:formFieldProperty name="lookupScreen" value="User.list" />
               <jmix:formFieldProperty name="query" value="select u from User u where u.position = &#39;developer&#39;" />
-            </jmix:formField>
-            <jmix:formField id="approver" caption="Approver" type="entity" editable="true" required="false">
-              <jmix:formFieldProperty name="entityName" value="User" />
-              <jmix:formFieldProperty name="uiComponent" value="comboBox" />
-              <jmix:formFieldProperty name="lookupScreen" value="User.list" />
-              <jmix:formFieldProperty name="query" value="select u from User u where u.position = &#39;accountant&#39;" />
             </jmix:formField>
           </jmix:formFields>
         </jmix:formData>
@@ -53,25 +47,9 @@
       <incoming>Flow_1dhd1js</incoming>
       <outgoing>Flow_0a3k7zc</outgoing>
     </userTask>
-    <userTask id="Activity_0q5u49u" name="Approve order" flowable:assignee="${approver.username}" jmix:assigneeSource="processVariable" jmix:assigneeValue="approver">
+    <userTask id="Activity_0q5u49u" name="Approve order" flowable:assignee="${randomRobinAccountantProvider.getUser()}" jmix:assigneeSource="userProvider" jmix:assigneeValue="randomRobinAccountantProvider">
       <extensionElements>
-        <jmix:formData type="input-dialog" openMode="DIALOG">
-          <jmix:formFields>
-            <jmix:formField id="pizzaEater" caption="Pizza eater" type="entity" editable="false" required="false">
-              <jmix:formFieldProperty name="entityName" value="User" />
-              <jmix:formFieldProperty name="uiComponent" value="entityPicker" />
-              <jmix:formFieldProperty name="lookupScreen" value="User.list" />
-            </jmix:formField>
-            <jmix:formField id="pizzaItem" caption="Pizza item" type="platformEnum" editable="false" required="false">
-              <jmix:formFieldProperty name="enumClass" value="com.company.bpmcourse.entity.PizzaItem" />
-            </jmix:formField>
-            <jmix:formField id="approverMessage" caption="Message from accountant " type="string" editable="true" required="false" />
-          </jmix:formFields>
-          <jmix:formOutcomes>
-            <jmix:formOutcome id="approved" caption="Approve order" icon="DOLLAR" />
-            <jmix:formOutcome id="rejected" caption="Rejecte order" icon="BAN" />
-          </jmix:formOutcomes>
-        </jmix:formData>
+        <jmix:springBean beanName="randomRobinAccountantProvider" methodName="getUser" />
       </extensionElements>
       <incoming>Flow_07l389m</incoming>
       <outgoing>Flow_1ynq0vv</outgoing>
@@ -80,11 +58,6 @@
       <extensionElements>
         <jmix:formData type="input-dialog" openMode="DIALOG">
           <jmix:formFields>
-            <jmix:formField id="approver" caption="Approver" type="entity" editable="false" required="false">
-              <jmix:formFieldProperty name="entityName" value="User" />
-              <jmix:formFieldProperty name="uiComponent" value="entityPicker" />
-              <jmix:formFieldProperty name="lookupScreen" value="User.list" />
-            </jmix:formField>
             <jmix:formField id="approverMessage" caption="Approver message" type="string" editable="false" required="false" />
             <jmix:formField id="pizzaEater" caption="Pizza eater" type="entity" editable="false" required="false">
               <jmix:formFieldProperty name="entityName" value="User" />
@@ -117,14 +90,24 @@
     <endEvent id="Event_1r8ysml">
       <incoming>Flow_08950d2</incoming>
     </endEvent>
-    <sequenceFlow id="Flow_08950d2" name="Not hungry" sourceRef="Gateway_0bebfvn" targetRef="Event_1r8ysml" />
+    <sequenceFlow id="Flow_08950d2" name="Not hungry" sourceRef="Gateway_0bebfvn" targetRef="Event_1r8ysml">
+      <extensionElements>
+        <jmix:conditionDetails conditionSource="userTaskOutcome" conditionType="anyoneCompleted" userTaskId="Activity_1st2asf" userTaskOutcome="not_hungry" />
+      </extensionElements>
+      <conditionExpression xsi:type="tFormalExpression">${execution.getVariable('Activity_1st2asf_result') != null &amp;&amp; bpm_UserTaskResults.containsOutcome(execution.getVariable('Activity_1st2asf_result'), 'not_hungry')}</conditionExpression>
+    </sequenceFlow>
     <endEvent id="Event_07tlicy">
       <incoming>Flow_1845bbf</incoming>
     </endEvent>
-    <sequenceFlow id="Flow_1845bbf" name="Rejected" sourceRef="Gateway_0xd915y" targetRef="Event_07tlicy" />
+    <sequenceFlow id="Flow_1845bbf" name="Rejected" sourceRef="Gateway_0xd915y" targetRef="Event_07tlicy">
+      <extensionElements>
+        <jmix:conditionDetails conditionSource="userTaskOutcome" conditionType="anyoneCompleted" userTaskId="Activity_0q5u49u" userTaskOutcome="rejected" />
+      </extensionElements>
+      <conditionExpression xsi:type="tFormalExpression">${execution.getVariable('Activity_0q5u49u_result') != null &amp;&amp; bpm_UserTaskResults.containsOutcome(execution.getVariable('Activity_0q5u49u_result'), 'rejected')}</conditionExpression>
+    </sequenceFlow>
   </process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_process">
-    <bpmndi:BPMNPlane id="BPMNPlane_process" bpmnElement="pizza-process-with-dialogs">
+    <bpmndi:BPMNPlane id="BPMNPlane_process" bpmnElement="pizza-process-with-user-provider">
       <bpmndi:BPMNShape id="BPMNShape_startEvent1" bpmnElement="startEvent1">
         <omgdc:Bounds x="50" y="150" width="36" height="36" />
         <bpmndi:BPMNLabel>

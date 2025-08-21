@@ -5,6 +5,9 @@ import com.vaadin.flow.component.page.AppShellConfigurator;
 import com.vaadin.flow.component.page.Push;
 import com.vaadin.flow.server.PWA;
 import com.vaadin.flow.theme.Theme;
+import io.jmix.notifications.NotificationType;
+import io.jmix.notifications.NotificationTypesRepository;
+import jakarta.annotation.PostConstruct;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
@@ -23,6 +26,9 @@ import javax.sql.DataSource;
 @Theme(value = "bpm-course")
 @SpringBootApplication
 public class BpmCourseApplication implements AppShellConfigurator {
+
+    @Autowired
+    private NotificationTypesRepository notificationTypesRepository;
 
     @Autowired
     private Environment environment;
@@ -51,5 +57,14 @@ public class BpmCourseApplication implements AppShellConfigurator {
                 + "http://localhost:"
                 + environment.getProperty("local.server.port")
                 + Strings.nullToEmpty(environment.getProperty("server.servlet.context-path")));
+    }
+
+    @PostConstruct
+    public void postConstruct() {
+        notificationTypesRepository.registerTypes(
+                new NotificationType("info", "INFO_CIRCLE"),
+                new NotificationType("warn", "WARNING"),
+                new NotificationType("task", "ALARM")
+        );
     }
 }
