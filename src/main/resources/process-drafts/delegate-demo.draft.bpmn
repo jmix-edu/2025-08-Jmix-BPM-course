@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:jmix="http://jmix.io/schema/bpm/bpmn" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" xmlns:flowable="http://flowable.org/bpmn" xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.flowable.org/processdef" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL http://www.omg.org/spec/BPMN/2.0/20100501/BPMN20.xsd">
+  <process id="delegate-demo" name="Delegate demo" isExecutable="true">
+    <startEvent id="startEvent1">
+      <outgoing>Flow_1y3yuq0</outgoing>
+    </startEvent>
+    <sequenceFlow id="Flow_1y3yuq0" sourceRef="startEvent1" targetRef="Activity_1b72sse" />
+    <serviceTask id="Activity_1b72sse" name="Delegate" flowable:class="com.company.bpmcourse.delegate.MyDelegate" jmix:taskType="javaDelegateClass">
+      <incoming>Flow_1y3yuq0</incoming>
+      <outgoing>Flow_079y1ts</outgoing>
+    </serviceTask>
+    <endEvent id="Event_18w8366">
+      <incoming>Flow_079y1ts</incoming>
+    </endEvent>
+    <sequenceFlow id="Flow_079y1ts" sourceRef="Activity_1b72sse" targetRef="Event_18w8366" />
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_process">
+    <bpmndi:BPMNPlane id="BPMNPlane_process" bpmnElement="delegate-demo">
+      <bpmndi:BPMNShape id="BPMNShape_startEvent1" bpmnElement="startEvent1">
+        <omgdc:Bounds x="150" y="150" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1tq72d4_di" bpmnElement="Activity_1b72sse">
+        <omgdc:Bounds x="240" y="128" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_18w8366_di" bpmnElement="Event_18w8366">
+        <omgdc:Bounds x="402" y="150" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1y3yuq0_di" bpmnElement="Flow_1y3yuq0">
+        <omgdi:waypoint x="186" y="168" />
+        <omgdi:waypoint x="240" y="168" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_079y1ts_di" bpmnElement="Flow_079y1ts">
+        <omgdi:waypoint x="340" y="168" />
+        <omgdi:waypoint x="402" y="168" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>
