@@ -1,0 +1,301 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:flowable="http://flowable.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:jmix="http://jmix.io/schema/bpm/bpmn" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.flowable.org/processdef" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL http://www.omg.org/spec/BPMN/2.0/20100501/BPMN20.xsd">
+  <process id="accaunt-mangement-saga-service" name="Accaunt mangement saga service" isExecutable="true">
+    <startEvent id="startEvent1">
+      <extensionElements>
+        <jmix:processVariables>
+          <jmix:processVariable name="sender" type="string" />
+          <jmix:processVariable name="receiver" type="string" />
+          <jmix:processVariable name="amount" type="long" />
+          <jmix:processVariable name="begin" type="date" />
+          <jmix:processVariable name="finish" type="date" />
+          <jmix:processVariable name="transactionResult" type="boolean" />
+          <jmix:processVariable name="debitResult" type="boolean" />
+          <jmix:processVariable name="creditResult" type="boolean" />
+        </jmix:processVariables>
+        <jmix:formData type="input-dialog" openMode="DIALOG">
+          <jmix:formFields>
+            <jmix:formField id="sender" caption="Sender" type="string" editable="true" required="true" />
+            <jmix:formField id="receiver" caption="Receiver" type="string" editable="true" required="true" />
+            <jmix:formField id="amount" caption="Amount" type="long" editable="true" required="true" />
+          </jmix:formFields>
+        </jmix:formData>
+      </extensionElements>
+      <outgoing>Flow_1dtcsho</outgoing>
+    </startEvent>
+    <sequenceFlow id="Flow_1dtcsho" sourceRef="startEvent1" targetRef="Activity_0cbecxl" />
+    <scriptTask id="Activity_0cbecxl" name="Begin transaction" scriptFormat="groovy">
+      <incoming>Flow_1dtcsho</incoming>
+      <outgoing>Flow_0espk9g</outgoing>
+      <script>def date = new Date()
+execution.setVariable("begin", date)
+println "Transaction started at: $date" </script>
+    </scriptTask>
+    <subProcess id="Activity_0c0jrnk" name="Account SAGA subprocess">
+      <incoming>Flow_0espk9g</incoming>
+      <outgoing>Flow_06eyaha</outgoing>
+      <startEvent id="Event_1wpf208">
+        <outgoing>Flow_0q97bgj</outgoing>
+      </startEvent>
+      <sequenceFlow id="Flow_0q97bgj" sourceRef="Event_1wpf208" targetRef="Activity_13qvfim" />
+      <sequenceFlow id="Flow_11roekz" sourceRef="Activity_13qvfim" targetRef="Activity_0jzwcfa" />
+      <sequenceFlow id="Flow_158e6ex" sourceRef="Activity_0jzwcfa" targetRef="Activity_1sspx7f" />
+      <boundaryEvent id="Event_0ukumqr" attachedToRef="Activity_13qvfim">
+        <compensateEventDefinition id="CompensateEventDefinition_03ovof5" />
+      </boundaryEvent>
+      <boundaryEvent id="Event_125lhx9" attachedToRef="Activity_0jzwcfa">
+        <compensateEventDefinition id="CompensateEventDefinition_0cc7j8g" />
+      </boundaryEvent>
+      <exclusiveGateway id="Gateway_0697kgf" default="Flow_0jhff2v">
+        <incoming>Flow_071sq7l</incoming>
+        <outgoing>Flow_10f70ip</outgoing>
+        <outgoing>Flow_0jhff2v</outgoing>
+      </exclusiveGateway>
+      <sequenceFlow id="Flow_071sq7l" sourceRef="Activity_1sspx7f" targetRef="Gateway_0697kgf" />
+      <endEvent id="Event_0wrgq3x">
+        <incoming>Flow_10f70ip</incoming>
+      </endEvent>
+      <sequenceFlow id="Flow_10f70ip" name="OK" sourceRef="Gateway_0697kgf" targetRef="Event_0wrgq3x">
+        <extensionElements>
+          <jmix:conditionDetails conditionSource="expression" />
+        </extensionElements>
+        <conditionExpression xsi:type="tFormalExpression">${transactionResult}</conditionExpression>
+      </sequenceFlow>
+      <sequenceFlow id="Flow_0jhff2v" name="ERROR" sourceRef="Gateway_0697kgf" targetRef="Event_0dwt7t6" />
+      <endEvent id="Event_08xt9zo">
+        <incoming>Flow_0nsph0u</incoming>
+        <incoming>Flow_1eomosa</incoming>
+        <errorEventDefinition id="ErrorEventDefinition_1n7xcnm" />
+      </endEvent>
+      <sequenceFlow id="Flow_0nsph0u" sourceRef="Event_0dwt7t6" targetRef="Event_08xt9zo" />
+      <intermediateThrowEvent id="Event_0dwt7t6">
+        <incoming>Flow_0jhff2v</incoming>
+        <outgoing>Flow_0nsph0u</outgoing>
+        <outgoing>Flow_1eomosa</outgoing>
+        <compensateEventDefinition id="CompensateEventDefinition_05q64by" />
+      </intermediateThrowEvent>
+      <serviceTask id="Activity_13qvfim" name="Debit sender acc" flowable:expression="${accountService.debit(sender,amount)}" flowable:resultVariable="debitResult" jmix:taskType="springBean" jmix:beanName="accountService">
+        <extensionElements>
+          <jmix:springBean beanName="accountService" methodName="debit">
+            <jmix:methodParam name="owner" type="java.lang.String" isVariable="true">sender</jmix:methodParam>
+            <jmix:methodParam name="amountToDebit" type="long" isVariable="true">amount</jmix:methodParam>
+          </jmix:springBean>
+        </extensionElements>
+        <incoming>Flow_0q97bgj</incoming>
+        <outgoing>Flow_11roekz</outgoing>
+      </serviceTask>
+      <serviceTask id="Activity_0jzwcfa" name="Credit reciever acc" flowable:expression="${accountService.credit(receiver,amount)}" flowable:resultVariable="creditResult" jmix:taskType="springBean" jmix:beanName="accountService">
+        <extensionElements>
+          <jmix:springBean beanName="accountService" methodName="credit">
+            <jmix:methodParam name="owner" type="java.lang.String" isVariable="true">receiver</jmix:methodParam>
+            <jmix:methodParam name="amountToCredit" type="long" isVariable="true">amount</jmix:methodParam>
+          </jmix:springBean>
+        </extensionElements>
+        <incoming>Flow_11roekz</incoming>
+        <outgoing>Flow_158e6ex</outgoing>
+      </serviceTask>
+      <serviceTask id="Activity_06c4sa3" name="Undo debit" isForCompensation="true" flowable:expression="${accountService.credit(sender,amount)}" jmix:taskType="springBean" jmix:beanName="accountService">
+        <extensionElements>
+          <jmix:springBean beanName="accountService" methodName="credit">
+            <jmix:methodParam name="owner" type="java.lang.String" isVariable="true">sender</jmix:methodParam>
+            <jmix:methodParam name="amountToCredit" type="long" isVariable="true">amount</jmix:methodParam>
+          </jmix:springBean>
+        </extensionElements>
+      </serviceTask>
+      <serviceTask id="Activity_0b4tpr0" name="Undo credit" isForCompensation="true" flowable:expression="${accountService.debit(receiver,amount)}" jmix:taskType="springBean" jmix:beanName="accountService">
+        <extensionElements>
+          <jmix:springBean beanName="accountService" methodName="debit">
+            <jmix:methodParam name="owner" type="java.lang.String" isVariable="true">receiver</jmix:methodParam>
+            <jmix:methodParam name="amountToDebit" type="long" isVariable="true">amount</jmix:methodParam>
+          </jmix:springBean>
+        </extensionElements>
+      </serviceTask>
+      <scriptTask id="Activity_1sspx7f" name="Check error" scriptFormat="groovy">
+        <incoming>Flow_158e6ex</incoming>
+        <outgoing>Flow_071sq7l</outgoing>
+        <script>boolean transactionResult = debitResult &amp;&amp; creditResult
+println "Transuction result: + $transactionResult"
+execution.setVariable("transactionResult", transactionResult)</script>
+      </scriptTask>
+      <sequenceFlow id="Flow_1eomosa" sourceRef="Event_0dwt7t6" targetRef="Event_08xt9zo" />
+      <association id="Association_0cc40xq" associationDirection="One" sourceRef="Event_0ukumqr" targetRef="Activity_06c4sa3" />
+      <association id="Association_1rsth9w" associationDirection="One" sourceRef="Event_125lhx9" targetRef="Activity_0b4tpr0" />
+    </subProcess>
+    <sequenceFlow id="Flow_06eyaha" sourceRef="Activity_0c0jrnk" targetRef="Activity_0qqbti1" />
+    <endEvent id="Event_1r54jex">
+      <incoming>Flow_0k89f48</incoming>
+    </endEvent>
+    <sequenceFlow id="Flow_0k89f48" sourceRef="Activity_0qqbti1" targetRef="Event_1r54jex" />
+    <boundaryEvent id="Event_02tqc6d" attachedToRef="Activity_0c0jrnk">
+      <outgoing>Flow_0cdtgzl</outgoing>
+      <errorEventDefinition id="ErrorEventDefinition_0opepws" />
+    </boundaryEvent>
+    <sequenceFlow id="Flow_0cdtgzl" sourceRef="Event_02tqc6d" targetRef="Activity_13pumlz" />
+    <sequenceFlow id="Flow_0y1uinb" sourceRef="Activity_13pumlz" targetRef="Event_1d6hfig" />
+    <endEvent id="Event_1d6hfig">
+      <incoming>Flow_0y1uinb</incoming>
+      <errorEventDefinition id="ErrorEventDefinition_1842my1" />
+    </endEvent>
+    <scriptTask id="Activity_0qqbti1" name="Success" scriptFormat="groovy">
+      <incoming>Flow_06eyaha</incoming>
+      <outgoing>Flow_0k89f48</outgoing>
+      <script>def finish = new Date()
+def difference = finish.time - begin.time
+println "Transaction completed in: $difference millis"  </script>
+    </scriptTask>
+    <scriptTask id="Activity_13pumlz" name="Failure" scriptFormat="groovy">
+      <incoming>Flow_0cdtgzl</incoming>
+      <outgoing>Flow_0y1uinb</outgoing>
+      <script>def finish = new Date()
+def difference = finish.time - begin.time
+println "Transaction failed in: $difference millis"  </script>
+    </scriptTask>
+    <sequenceFlow id="Flow_0espk9g" sourceRef="Activity_0cbecxl" targetRef="Activity_0c0jrnk" />
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_process">
+    <bpmndi:BPMNPlane id="BPMNPlane_process" bpmnElement="accaunt-mangement-saga-service">
+      <bpmndi:BPMNShape id="BPMNShape_startEvent1" bpmnElement="startEvent1">
+        <omgdc:Bounds x="150" y="150" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1qv39ia_di" bpmnElement="Activity_0cbecxl">
+        <omgdc:Bounds x="240" y="128" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0c0jrnk_di" bpmnElement="Activity_0c0jrnk" isExpanded="true">
+        <omgdc:Bounds x="410" y="-8" width="800" height="352" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1wpf208_di" bpmnElement="Event_1wpf208">
+        <omgdc:Bounds x="432" y="72" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0697kgf_di" bpmnElement="Gateway_0697kgf" isMarkerVisible="true">
+        <omgdc:Bounds x="1005" y="65" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0wrgq3x_di" bpmnElement="Event_0wrgq3x">
+        <omgdc:Bounds x="1122" y="72" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1o3llv6_di" bpmnElement="Event_08xt9zo">
+        <omgdc:Bounds x="1122" y="182" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0w3xia4_di" bpmnElement="Event_0dwt7t6">
+        <omgdc:Bounds x="1012" y="182" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0ypxfrs_di" bpmnElement="Activity_13qvfim">
+        <omgdc:Bounds x="520" y="50" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0v1nk29_di" bpmnElement="Activity_0jzwcfa">
+        <omgdc:Bounds x="680" y="50" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1s8lvay_di" bpmnElement="Activity_06c4sa3">
+        <omgdc:Bounds x="570" y="190" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0nb6ey5_di" bpmnElement="Activity_0b4tpr0">
+        <omgdc:Bounds x="730" y="190" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1fbib9g_di" bpmnElement="Activity_1sspx7f">
+        <omgdc:Bounds x="840" y="50" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1omlcfr_di" bpmnElement="Event_125lhx9">
+        <omgdc:Bounds x="692" y="112" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1caqfq3_di" bpmnElement="Event_0ukumqr">
+        <omgdc:Bounds x="532" y="112" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0q97bgj_di" bpmnElement="Flow_0q97bgj">
+        <omgdi:waypoint x="468" y="90" />
+        <omgdi:waypoint x="520" y="90" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_11roekz_di" bpmnElement="Flow_11roekz">
+        <omgdi:waypoint x="620" y="90" />
+        <omgdi:waypoint x="680" y="90" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_158e6ex_di" bpmnElement="Flow_158e6ex">
+        <omgdi:waypoint x="780" y="90" />
+        <omgdi:waypoint x="840" y="90" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_071sq7l_di" bpmnElement="Flow_071sq7l">
+        <omgdi:waypoint x="940" y="90" />
+        <omgdi:waypoint x="1005" y="90" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_10f70ip_di" bpmnElement="Flow_10f70ip">
+        <omgdi:waypoint x="1055" y="90" />
+        <omgdi:waypoint x="1122" y="90" />
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds x="1080" y="72" width="17" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0jhff2v_di" bpmnElement="Flow_0jhff2v">
+        <omgdi:waypoint x="1030" y="115" />
+        <omgdi:waypoint x="1030" y="182" />
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds x="1050" y="161" width="40" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0nsph0u_di" bpmnElement="Flow_0nsph0u">
+        <omgdi:waypoint x="1048" y="200" />
+        <omgdi:waypoint x="1122" y="200" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1eomosa_di" bpmnElement="Flow_1eomosa">
+        <omgdi:waypoint x="1048" y="200" />
+        <omgdi:waypoint x="1122" y="200" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_0cc40xq_di" bpmnElement="Association_0cc40xq">
+        <omgdi:waypoint x="550" y="148" />
+        <omgdi:waypoint x="550" y="230" />
+        <omgdi:waypoint x="570" y="230" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1rsth9w_di" bpmnElement="Association_1rsth9w">
+        <omgdi:waypoint x="710" y="148" />
+        <omgdi:waypoint x="710" y="230" />
+        <omgdi:waypoint x="730" y="230" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_1r54jex_di" bpmnElement="Event_1r54jex">
+        <omgdc:Bounds x="1412" y="150" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_105tqhu_di" bpmnElement="Event_1d6hfig">
+        <omgdc:Bounds x="1412" y="412" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0ci7ngr_di" bpmnElement="Activity_0qqbti1">
+        <omgdc:Bounds x="1260" y="128" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1qkosun_di" bpmnElement="Activity_13pumlz">
+        <omgdc:Bounds x="1260" y="390" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_17mp1mn_di" bpmnElement="Event_02tqc6d">
+        <omgdc:Bounds x="1122" y="326" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1dtcsho_di" bpmnElement="Flow_1dtcsho">
+        <omgdi:waypoint x="186" y="168" />
+        <omgdi:waypoint x="240" y="168" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_06eyaha_di" bpmnElement="Flow_06eyaha">
+        <omgdi:waypoint x="1210" y="168" />
+        <omgdi:waypoint x="1260" y="168" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0k89f48_di" bpmnElement="Flow_0k89f48">
+        <omgdi:waypoint x="1360" y="168" />
+        <omgdi:waypoint x="1412" y="168" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0cdtgzl_di" bpmnElement="Flow_0cdtgzl">
+        <omgdi:waypoint x="1140" y="362" />
+        <omgdi:waypoint x="1140" y="430" />
+        <omgdi:waypoint x="1260" y="430" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0y1uinb_di" bpmnElement="Flow_0y1uinb">
+        <omgdi:waypoint x="1360" y="430" />
+        <omgdi:waypoint x="1412" y="430" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0espk9g_di" bpmnElement="Flow_0espk9g">
+        <omgdi:waypoint x="340" y="168" />
+        <omgdi:waypoint x="410" y="168" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

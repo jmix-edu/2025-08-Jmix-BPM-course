@@ -4,6 +4,8 @@ import com.company.bpmcourse.entity.PizzaItem;
 import io.jmix.core.UnconstrainedDataManager;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component(value = "pizzaService")
 public class PizzaService {
 
@@ -23,6 +25,11 @@ public class PizzaService {
     public void undoPriceChange(PizzaItem pizzaItem, long oldPrice) {
         pizzaItem.setPrice(oldPrice);
         unconstrainedDataManager.save(pizzaItem);
+    }
+
+    public List<PizzaItem> getPizzaItems() {
+        return unconstrainedDataManager.load(PizzaItem.class)
+                .all().list();
     }
 
 }

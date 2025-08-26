@@ -27,4 +27,13 @@ public class ErrorService {
         return new Random().nextInt(100) < FAIL_PROBABILITY;
     }
 
+    public void techError(String code, Boolean error) {
+        if (error != null && !error) {
+            return;
+        } else {
+            log.info("Technical error: {}", code);
+            throw new RuntimeException(code);
+        }
+    }
+
 }

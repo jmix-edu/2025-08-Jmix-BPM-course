@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:flowable="http://flowable.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" xmlns:jmix="http://jmix.io/schema/bpm/bpmn" xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.flowable.org/processdef" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL http://www.omg.org/spec/BPMN/2.0/20100501/BPMN20.xsd">
+  <process id="collection-providers-demo" name="Collection providers demo" isExecutable="true">
+    <startEvent id="startEvent1">
+      <extensionElements>
+        <jmix:processVariables>
+          <jmix:processVariable name="pizzaItems" type="entity-list">
+            <jmix:processVariableProperty name="entityName" value="PizzaItem" />
+          </jmix:processVariable>
+        </jmix:processVariables>
+      </extensionElements>
+      <outgoing>Flow_0mgljj3</outgoing>
+    </startEvent>
+    <sequenceFlow id="Flow_0mgljj3" sourceRef="startEvent1" targetRef="Activity_0170poe" />
+    <serviceTask id="Activity_0170poe" name="Load pizzas" flowable:type="jmix-load-entities-jpql">
+      <extensionElements>
+        <flowable:field name="jpql">
+          <flowable:string>select p from PizzaItem p</flowable:string>
+        </flowable:field>
+        <flowable:field name="resultVariable">
+          <flowable:string>pizzaItems</flowable:string>
+        </flowable:field>
+        <flowable:field name="saveLoadResultAs">
+          <flowable:string>collection</flowable:string>
+        </flowable:field>
+      </extensionElements>
+      <incoming>Flow_0mgljj3</incoming>
+      <outgoing>Flow_01ks720</outgoing>
+    </serviceTask>
+    <sequenceFlow id="Flow_01ks720" sourceRef="Activity_0170poe" targetRef="Activity_18wreyo" />
+    <scriptTask id="Activity_18wreyo" name="Print pizzas from variable" scriptFormat="groovy">
+      <incoming>Flow_01ks720</incoming>
+      <outgoing>Flow_1v6dgra</outgoing>
+      <multiInstanceLoopCharacteristics isSequential="true" flowable:collection="pizzaItems" flowable:elementVariable="pizzaItems_item" jmix:collectionSource="processVariable" jmix:collectionValue="pizzaItems" />
+      <script>println "Pizza from variable name: $pizzaItems_item.name, price is: $pizzaItems_item.price"</script>
+    </scriptTask>
+    <sequenceFlow id="Flow_1v6dgra" sourceRef="Activity_18wreyo" targetRef="Activity_0f71i0g" />
+    <scriptTask id="Activity_0f71i0g" name="Print pizzas from service" scriptFormat="groovy">
+      <incoming>Flow_1v6dgra</incoming>
+      <outgoing>Flow_09qu8fc</outgoing>
+      <multiInstanceLoopCharacteristics flowable:collection="${pizzaService.getPizzaItems()}" flowable:elementVariable="item" jmix:collectionSource="expression" jmix:collectionValue="${pizzaService.getPizzaItems()}" />
+      <script>println "Pizza from service: $item.name == $item.price"</script>
+    </scriptTask>
+    <sequenceFlow id="Flow_09qu8fc" sourceRef="Activity_0f71i0g" targetRef="Activity_09wh4qg" />
+    <scriptTask id="Activity_09wh4qg" name="Print users" scriptFormat="groovy">
+      <extensionElements>
+        <jmix:springBean beanName="demoUsersProvider" methodName="getUsers" />
+      </extensionElements>
+      <incoming>Flow_09qu8fc</incoming>
+      <multiInstanceLoopCharacteristics flowable:collection="${demoUsersProvider.getUsers()}" flowable:elementVariable="demoUsersProvider_item" jmix:collectionSource="userListProvider" jmix:collectionValue="demoUsersProvider" />
+      <script>println "User from provider: $demoUsersProvider_item"</script>
+    </scriptTask>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_process">
+    <bpmndi:BPMNPlane id="BPMNPlane_process" bpmnElement="collection-providers-demo">
+      <bpmndi:BPMNShape id="BPMNShape_startEvent1" bpmnElement="startEvent1">
+        <omgdc:Bounds x="150" y="150" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0d5eodv_di" bpmnElement="Activity_0170poe">
+        <omgdc:Bounds x="240" y="128" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0qoryzy_di" bpmnElement="Activity_18wreyo">
+        <omgdc:Bounds x="400" y="128" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1y8do6h_di" bpmnElement="Activity_0f71i0g">
+        <omgdc:Bounds x="560" y="128" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1pxblj1_di" bpmnElement="Activity_09wh4qg">
+        <omgdc:Bounds x="720" y="128" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0mgljj3_di" bpmnElement="Flow_0mgljj3">
+        <omgdi:waypoint x="186" y="168" />
+        <omgdi:waypoint x="240" y="168" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_01ks720_di" bpmnElement="Flow_01ks720">
+        <omgdi:waypoint x="340" y="168" />
+        <omgdi:waypoint x="400" y="168" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1v6dgra_di" bpmnElement="Flow_1v6dgra">
+        <omgdi:waypoint x="500" y="168" />
+        <omgdi:waypoint x="560" y="168" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_09qu8fc_di" bpmnElement="Flow_09qu8fc">
+        <omgdi:waypoint x="660" y="168" />
+        <omgdi:waypoint x="720" y="168" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>
