@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<view xmlns="http://jmix.io/schema/flowui/view"
+      title="msg://approverForm.title">
+    <layout>
+        <formLayout>
+            <textField datatype="string" id="approverMessageField" label="msg://approverForm.variable.approverMessage"/>
+            <entityPicker id="pizzaEaterField" label="msg://approverForm.variable.pizzaEater" metaClass="User" readOnly="true"/>
+            <entityPicker id="pizzaItemField" label="msg://approverForm.variable.pizzaItem" metaClass="PizzaItem" readOnly="true"/>
+        </formLayout>
+        <hbox id="actionsPanel">
+            <button id="approvedBtn" icon="DOLLAR" text="msg://approverForm.outcome.approved" themeNames="primary"/>
+            <button id="rejectedBtn" icon="BAN" text="msg://approverForm.outcome.rejected"/>
+        </hbox>
+    </layout>
+</view>

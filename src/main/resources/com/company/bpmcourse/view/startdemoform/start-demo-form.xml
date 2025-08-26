@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<view xmlns="http://jmix.io/schema/flowui/view"
+      title="msg://startDemoForm.title">
+    <layout>
+        <formLayout>
+            <textField datatype="string" id="messageField" label="msg://startDemoForm.variable.message"
+                       required="true"/>
+        </formLayout>
+        <hbox id="actionsPanel">
+            <button id="startProcessBtn" icon="CHECK" text="msg://startDemoForm.startProcess" themeNames="primary"/>
+        </hbox>
+    </layout>
+</view>

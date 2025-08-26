@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<view xmlns="http://jmix.io/schema/flowui/view"
+      title="msg://pizzaEaterForm.title">
+    <data>
+        <collection id="pizzaItemsDc" class="com.company.bpmcourse.entity.PizzaItem">
+            <fetchPlan extends="_base"/>
+            <loader id="pizzaItemsDl" readOnly="true">
+                <query><![CDATA[select e from PizzaItem e]]></query>
+            </loader>
+        </collection>
+    </data>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+    </facets>
+    <layout>
+        <formLayout>
+            <textField datatype="string" id="messageField" label="msg://pizzaEaterForm.variable.message"
+                       readOnly="true"/>
+            <entityComboBox id="pizzaItemField"
+                            label="msg://pizzaEaterForm.variable.pizzaItem"
+                            metaClass="PizzaItem"
+                            itemsContainer="pizzaItemsDc" required="true">
+                <actions>
+                    <action id="entityClearAction" type="entity_clear"/>
+                </actions>
+            </entityComboBox>
+            <textArea id="specialRequirementsField"
+                      label="msg://pizzaEaterForm.variable.specialRequirements"
+                      height="9.5em"/>
+        </formLayout>
+        <hbox id="actionsPanel">
+            <button id="pizza_selectedBtn" icon="THUMBS_UP" text="msg://pizzaEaterForm.outcome.pizza_selected"
+                    themeNames="primary"/>
+            <button id="not_hungryBtn" icon="THUMBS_DOWN" text="msg://pizzaEaterForm.outcome.not_hungry"/>
+        </hbox>
+    </layout>
+</view>

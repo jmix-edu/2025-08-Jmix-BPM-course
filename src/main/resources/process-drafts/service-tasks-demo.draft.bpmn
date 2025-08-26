@@ -42,7 +42,7 @@
       <incoming>Flow_1beouhb</incoming>
       <outgoing>Flow_0cfwiyd</outgoing>
     </serviceTask>
-    <serviceTask id="Activity_0s7c25i" name="Java delegate expression" jmix:taskType="delegateExpression">
+    <serviceTask id="Activity_0s7c25i" name="Java delegate expression" flowable:delegateExpression="${randomUserDelegate}" jmix:taskType="delegateExpression">
       <incoming>Flow_0cfwiyd</incoming>
       <outgoing>Flow_1lmxheh</outgoing>
     </serviceTask>
@@ -56,7 +56,7 @@
       <incoming>Flow_1lmxheh</incoming>
       <outgoing>Flow_1as209c</outgoing>
     </serviceTask>
-    <serviceTask id="Activity_1ubeaqb" name="Expression task" flowable:expression="${greetinMessageBean.printTime(timeToPrint)}" jmix:taskType="expression">
+    <serviceTask id="Activity_1ubeaqb" name="Expression task" flowable:expression="${greetingMessageBean.printTime(timeToPrint)}" jmix:taskType="expression">
       <incoming>Flow_1as209c</incoming>
       <outgoing>Flow_1k3bulc</outgoing>
     </serviceTask>

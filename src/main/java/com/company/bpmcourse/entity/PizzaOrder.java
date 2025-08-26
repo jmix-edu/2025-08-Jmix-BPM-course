@@ -50,6 +50,10 @@ public class PizzaOrder {
     @NotNull
     private Boolean rejected = false;
 
+    @Column(name = "CANCELLED", nullable = false)
+    @NotNull
+    private Boolean cancelled = false;
+
     @CreatedBy
     @Column(name = "CREATED_BY")
     private String createdBy;
@@ -65,6 +69,14 @@ public class PizzaOrder {
     @LastModifiedDate
     @Column(name = "LAST_MODIFIED_DATE")
     private OffsetDateTime lastModifiedDate;
+
+    public Boolean getCancelled() {
+        return cancelled;
+    }
+
+    public void setCancelled(Boolean cancelled) {
+        this.cancelled = cancelled;
+    }
 
     public Boolean getRejected() {
         return rejected;

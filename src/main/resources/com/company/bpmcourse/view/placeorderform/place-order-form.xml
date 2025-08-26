@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<view xmlns="http://jmix.io/schema/flowui/view"
+      title="msg://placeOrderForm.title">
+    <layout>
+        <formLayout>
+            <responsiveSteps>
+                <responsiveStep minWidth="0" columns="2"/>
+            </responsiveSteps>
+            <entityPicker id="approverField" label="msg://placeOrderForm.variable.approver" metaClass="User" readOnly="true"/>
+            <textField datatype="string" id="approverMessageField"
+                       label="msg://placeOrderForm.variable.approverMessage" readOnly="true"/>
+            <textField datatype="string" id="deliveryNumberField" label="msg://placeOrderForm.variable.deliveryNumber" required="true"/>
+            <entityPicker id="pizzaEaterField" label="msg://placeOrderForm.variable.pizzaEater" metaClass="User" readOnly="true"/>
+            <entityPicker id="pizzaItemField" label="msg://placeOrderForm.variable.pizzaItem" metaClass="PizzaItem" readOnly="true"/>
+            <textField datatype="string" id="specialRequirementsField"
+                       label="msg://placeOrderForm.variable.specialRequirements" readOnly="true"/>
+        </formLayout>
+        <hbox id="actionsPanel">
+            <button id="submitBtn" icon="CHECK" text="msg://placeOrderForm.outcome.submit" themeNames="primary"/>
+        </hbox>
+    </layout>
+</view>

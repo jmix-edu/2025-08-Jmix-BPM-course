@@ -18,7 +18,7 @@ public interface PizzaProcessActorRole {
     void user();
 
     @MenuPolicy(menuIds = "AdvancedTaskListView")
-    @ViewPolicy(viewIds = "AdvancedTaskListView")
+    @ViewPolicy(viewIds = {"AdvancedTaskListView", "ApproverForm", "PizzaEaterForm", "PizzaStartForm", "PlaceOrderForm"})
     void screens();
 
     @EntityAttributePolicy(entityClass = OrderLine.class, attributes = "*", action = EntityAttributePolicyAction.MODIFY)
