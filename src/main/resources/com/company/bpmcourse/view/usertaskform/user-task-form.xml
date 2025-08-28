@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<view xmlns="http://jmix.io/schema/flowui/view"
+      title="msg://userTaskForm.title">
+    <layout>
+        <formLayout>
+            <textField datatype="string" id="messageField" label="msg://userTaskForm.variable.message"/>
+        </formLayout>
+        <hbox id="actionsPanel">
+            <button id="rejectBtn" icon="BAN" text="msg://userTaskForm.outcome.reject" themeNames="primary"/>
+            <button id="laterBtn" icon="CLOCK_O" text="msg://userTaskForm.outcome.later"/>
+            <button id="selectedBtn" icon="THUMBS_UP" text="msg://userTaskForm.outcome.selected"/>
+        </hbox>
+    </layout>
+</view>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <menu-config xmlns="http://jmix.io/schema/flowui/menu">
 
-    <menu id="application" title="msg://com.company.bpmcourse/menu.application.title" opened="true">
+    <menu opened="true" id="application" title="msg://com.company.bpmcourse/menu.application.title">
         <item view="User.list" title="msg://com.company.bpmcourse.view.user/UserListView.title"/>
         <item view="AdvancedTaskListView"
               title="msg://com.company.bpmcourse.view.advancedtasklist/advancedTaskListView.title"/>
@@ -11,7 +11,9 @@
         <item view="Recipe.list" title="msg://com.company.bpmcourse.view.recipe/recipeListView.title"/>
         <item view="Account.list" title="msg://com.company.bpmcourse.view.account/accountListView.title"/>
     </menu>
-    <menu id="bpm" title="msg://io.jmix.bpmflowui/menu.bpm.title" opened="true">
+    <menu opened="true" id="bpm" title="msg://io.jmix.bpmflowui/menu.bpm.title">
+        <item view="ToolView" description="msg://com.company.bpmcourse/menu_config.ToolView.description"
+              title="msg://com.company.bpmcourse/menu_config.ToolView.title"/>
         <item view="bpm_StartProcess" title="msg://io.jmix.bpmflowui/startProcess.title"/>
         <item view="bpm_MyTasksList" title="msg://io.jmix.bpmflowui.view.mytasks/myTasksList.title"/>
         <item view="bpm_BpmnModelerView" title="msg://io.jmix.bpmflowui.view.modeler/bpmnModelerView.title"/>
@@ -39,5 +41,4 @@
     <menu id="quartz">
         <item view="quartz_JobModel.list" title="msg://io.jmix.quartzflowui.view.jobs/jobModelListView.menu"/>
     </menu>
-
 </menu-config>
