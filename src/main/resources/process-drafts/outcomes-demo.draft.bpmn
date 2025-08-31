@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:jmix="http://jmix.io/schema/bpm/bpmn" xmlns:flowable="http://flowable.org/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.flowable.org/processdef">
+  <process id="outcomes-demo" name="Outcomes demo" isExecutable="true">
+    <startEvent id="startEvent1">
+      <extensionElements>
+        <jmix:processVariables>
+          <jmix:processVariable name="approvers" type="entity-list">
+            <jmix:processVariableProperty name="entityName" value="User" />
+          </jmix:processVariable>
+        </jmix:processVariables>
+        <jmix:formData type="input-dialog" openMode="DIALOG">
+          <jmix:formFields>
+            <jmix:formField id="approvers" caption="Approvers" type="entity-list" editable="true" required="true">
+              <jmix:formFieldProperty name="entityName" value="User" />
+              <jmix:formFieldProperty name="uiComponent" value="entityPicker" />
+            </jmix:formField>
+          </jmix:formFields>
+        </jmix:formData>
+      </extensionElements>
+      <outgoing>Flow_09fqulw</outgoing>
+    </startEvent>
+    <sequenceFlow id="Flow_09fqulw" sourceRef="startEvent1" targetRef="Activity_approve">
+      <extensionElements>
+        <jmix:conditionDetails conditionSource="expression" />
+      </extensionElements>
+    </sequenceFlow>
+    <sequenceFlow id="Flow_1aax331" sourceRef="Activity_approve" targetRef="Activity_1u0g1jo" />
+    <inclusiveGateway id="Gateway_0uc2r23" default="Flow_1wyhg7l">
+      <incoming>Flow_04ftzzr</incoming>
+      <outgoing>Flow_1aln49d</outgoing>
+      <outgoing>Flow_1preuj5</outgoing>
+      <outgoing>Flow_0xwut41</outgoing>
+      <outgoing>Flow_1gco5so</outgoing>
+      <outgoing>Flow_1wyhg7l</outgoing>
+    </inclusiveGateway>
+    <endEvent id="Event_1wna3lq">
+      <incoming>Flow_1aln49d</incoming>
+    </endEvent>
+    <sequenceFlow id="Flow_1aln49d" name="All yes" sourceRef="Gateway_0uc2r23" targetRef="Event_1wna3lq">
+      <extensionElements>
+        <jmix:conditionDetails conditionSource="userTaskOutcome" conditionType="everyoneCompleted" userTaskId="Activity_approve" userTaskOutcome="yes" />
+      </extensionElements>
+      <conditionExpression xsi:type="tFormalExpression">${execution.getVariable('Activity_approve_result') != null &amp;&amp; bpm_UserTaskResults.getOutcomesCount(execution.getVariable('Activity_approve_result'),'yes') == bpm_UserTaskResults.getOutcomesCount(execution.getVariable('Activity_approve_result'))}</conditionExpression>
+    </sequenceFlow>
+    <endEvent id="Event_1s9yb7j">
+      <incoming>Flow_1preuj5</incoming>
+    </endEvent>
+    <sequenceFlow id="Flow_1preuj5" name="All no" sourceRef="Gateway_0uc2r23" targetRef="Event_1s9yb7j">
+      <extensionElements>
+        <jmix:conditionDetails conditionSource="userTaskOutcome" conditionType="everyoneCompleted" userTaskId="Activity_approve" userTaskOutcome="no" />
+      </extensionElements>
+      <conditionExpression xsi:type="tFormalExpression">${execution.getVariable('Activity_approve_result') != null &amp;&amp; bpm_UserTaskResults.getOutcomesCount(execution.getVariable('Activity_approve_result'),'no') == bpm_UserTaskResults.getOutcomesCount(execution.getVariable('Activity_approve_result'))}</conditionExpression>
+    </sequenceFlow>
+    <endEvent id="Event_11jljhx">
+      <incoming>Flow_0xwut41</incoming>
+    </endEvent>
+    <sequenceFlow id="Flow_0xwut41" name="No no" sourceRef="Gateway_0uc2r23" targetRef="Event_11jljhx">
+      <extensionElements>
+        <jmix:conditionDetails conditionSource="userTaskOutcome" conditionType="nooneCompleted" userTaskId="Activity_approve" userTaskOutcome="no" />
+      </extensionElements>
+      <conditionExpression xsi:type="tFormalExpression">${execution.getVariable('Activity_approve_result') != null &amp;&amp; !bpm_UserTaskResults.containsOutcome(execution.getVariable('Activity_approve_result'),'no')}</conditionExpression>
+    </sequenceFlow>
+    <userTask id="Activity_approve" name="Approve" flowable:assignee="${approvers_item.username}" jmix:assigneeSource="expression" jmix:assigneeValue="${approvers_item.username}">
+      <extensionElements>
+        <jmix:formData type="input-dialog" openMode="DIALOG">
+          <jmix:formOutcomes>
+            <jmix:formOutcome id="yes" caption="Yes" />
+            <jmix:formOutcome id="no" caption="No" />
+            <jmix:formOutcome id="maybe" caption="Maybe" />
+          </jmix:formOutcomes>
+        </jmix:formData>
+      </extensionElements>
+      <incoming>Flow_09fqulw</incoming>
+      <outgoing>Flow_1aax331</outgoing>
+      <multiInstanceLoopCharacteristics flowable:collection="approvers" flowable:elementVariable="approvers_item" jmix:collectionSource="processVariable" jmix:collectionValue="approvers" />
+    </userTask>
+    <sequenceFlow id="Flow_0kn4tn9" sourceRef="Activity_1u0g1jo" targetRef="Activity_0vcazqg" />
+    <sequenceFlow id="Flow_04ftzzr" sourceRef="Activity_0vcazqg" targetRef="Gateway_0uc2r23" />
+    <serviceTask id="Activity_1u0g1jo" name="Get outcomes string" flowable:expression="${outcomesContainerReaderDelegate.execute(execution)}" flowable:resultVariable="outcomes" jmix:taskType="${outcomesContainerReaderDelegate.execute(execution)}" jmix:beanName="outcomesContainerReaderDelegate">
+      <extensionElements>
+        <jmix:springBean beanName="outcomesContainerReaderDelegate" methodName="execute">
+          <jmix:methodParam name="execution" type="org.flowable.engine.delegate.DelegateExecution" isVariable="true">execution</jmix:methodParam>
+        </jmix:springBean>
+      </extensionElements>
+      <incoming>Flow_1aax331</incoming>
+      <outgoing>Flow_0kn4tn9</outgoing>
+    </serviceTask>
+    <userTask id="Activity_0vcazqg" name="See outcomes" flowable:assignee="${initiator.username}" jmix:assigneeSource="processVariable" jmix:assigneeValue="initiator">
+      <extensionElements>
+        <jmix:formData type="input-dialog" openMode="DIALOG">
+          <jmix:formFields>
+            <jmix:formField id="outcomes" caption="Outcomes" type="string" editable="false" required="false" />
+          </jmix:formFields>
+        </jmix:formData>
+      </extensionElements>
+      <incoming>Flow_0kn4tn9</incoming>
+      <outgoing>Flow_04ftzzr</outgoing>
+    </userTask>
+    <sequenceFlow id="Flow_1gco5so" name="Anyone maybe" sourceRef="Gateway_0uc2r23" targetRef="Event_0epndqw">
+      <extensionElements>
+        <jmix:conditionDetails conditionSource="userTaskOutcome" conditionType="anyoneCompleted" userTaskId="Activity_approve" userTaskOutcome="maybe" />
+      </extensionElements>
+      <conditionExpression xsi:type="tFormalExpression">${execution.getVariable('Activity_approve_result') != null &amp;&amp; bpm_UserTaskResults.containsOutcome(execution.getVariable('Activity_approve_result'), 'maybe')}</conditionExpression>
+    </sequenceFlow>
+    <endEvent id="Event_0epndqw">
+      <incoming>Flow_1gco5so</incoming>
+    </endEvent>
+    <endEvent id="Event_0myyz70">
+      <incoming>Flow_1wyhg7l</incoming>
+    </endEvent>
+    <sequenceFlow id="Flow_1wyhg7l" name="No suitable result" sourceRef="Gateway_0uc2r23" targetRef="Event_0myyz70">
+      <extensionElements>
+        <jmix:conditionDetails conditionSource="expression" />
+      </extensionElements>
+    </sequenceFlow>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_process">
+    <bpmndi:BPMNPlane id="BPMNPlane_process" bpmnElement="outcomes-demo">
+      <bpmndi:BPMNShape id="BPMNShape_startEvent1" bpmnElement="startEvent1">
+        <omgdc:Bounds x="150" y="150" width="30" height="30" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1p33dll_di" bpmnElement="Gateway_0uc2r23">
+        <omgdc:Bounds x="665" y="140" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1wna3lq_di" bpmnElement="Event_1wna3lq">
+        <omgdc:Bounds x="792" y="492" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1s9yb7j_di" bpmnElement="Event_1s9yb7j">
+        <omgdc:Bounds x="792" y="147" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_11jljhx_di" bpmnElement="Event_11jljhx">
+        <omgdc:Bounds x="792" y="262" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1hg1v59_di" bpmnElement="Activity_approve">
+        <omgdc:Bounds x="230" y="125" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1hgwr7z_di" bpmnElement="Activity_1u0g1jo">
+        <omgdc:Bounds x="380" y="125" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0gfss1s_di" bpmnElement="Activity_0vcazqg">
+        <omgdc:Bounds x="520" y="125" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0epndqw_di" bpmnElement="Event_0epndqw">
+        <omgdc:Bounds x="792" y="372" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0myyz70_di" bpmnElement="Event_0myyz70">
+        <omgdc:Bounds x="792" y="22" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_09fqulw_di" bpmnElement="Flow_09fqulw">
+        <di:waypoint x="180" y="165" />
+        <di:waypoint x="230" y="165" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1aax331_di" bpmnElement="Flow_1aax331">
+        <di:waypoint x="330" y="165" />
+        <di:waypoint x="380" y="165" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1aln49d_di" bpmnElement="Flow_1aln49d">
+        <di:waypoint x="690" y="190" />
+        <di:waypoint x="690" y="510" />
+        <di:waypoint x="792" y="510" />
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds x="713" y="483" width="33" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1preuj5_di" bpmnElement="Flow_1preuj5">
+        <di:waypoint x="715" y="165" />
+        <di:waypoint x="792" y="165" />
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds x="716" y="147" width="28" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0xwut41_di" bpmnElement="Flow_0xwut41">
+        <di:waypoint x="690" y="190" />
+        <di:waypoint x="690" y="280" />
+        <di:waypoint x="792" y="280" />
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds x="715" y="243" width="30" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0kn4tn9_di" bpmnElement="Flow_0kn4tn9">
+        <di:waypoint x="480" y="165" />
+        <di:waypoint x="520" y="165" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_04ftzzr_di" bpmnElement="Flow_04ftzzr">
+        <di:waypoint x="620" y="165" />
+        <di:waypoint x="665" y="165" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1gco5so_di" bpmnElement="Flow_1gco5so">
+        <di:waypoint x="690" y="190" />
+        <di:waypoint x="690" y="390" />
+        <di:waypoint x="792" y="390" />
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds x="713" y="363" width="74" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1wyhg7l_di" bpmnElement="Flow_1wyhg7l">
+        <di:waypoint x="690" y="140" />
+        <di:waypoint x="690" y="40" />
+        <di:waypoint x="792" y="40" />
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds x="745" y="69" width="85" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>
