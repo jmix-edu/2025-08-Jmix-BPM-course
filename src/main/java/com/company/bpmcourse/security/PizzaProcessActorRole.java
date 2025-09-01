@@ -10,7 +10,7 @@ import io.jmix.securityflowui.role.annotation.MenuPolicy;
 import io.jmix.securityflowui.role.annotation.ViewPolicy;
 
 @ResourceRole(name = "PizzaProcessActorRole", code = PizzaProcessActorRole.CODE, scope = "UI")
-public interface PizzaProcessActorRole {
+public interface PizzaProcessActorRole extends UiMinimalRole{
     String CODE = "pizza-process-actor-role";
 
     @EntityAttributePolicy(entityClass = User.class, attributes = {"username", "firstName", "lastName"}, action = EntityAttributePolicyAction.VIEW)

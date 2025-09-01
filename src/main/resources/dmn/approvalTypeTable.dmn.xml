@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<definitions xmlns="http://www.omg.org/spec/DMN/20151101" namespace="http://www.flowable.org/dmn" name="Approval type table">
+  <decision id="approvalTypeTable" name="Approval type table">
+    <decisionTable hitPolicy="FIRST">
+      <input label="Order amount">
+        <inputExpression id="input_Dm2Cy" typeRef="number">
+          <text><![CDATA[orderAmount]]></text>
+        </inputExpression>
+      </input>
+      <output id="output_ZPmMm" label="Approval type" name="approvalType" typeRef="string"/>
+      <rule>
+        <inputEntry id="inputEntry_fnQMJ">
+          <text><![CDATA[>5000.0]]></text>
+        </inputEntry>
+        <outputEntry id="outputEntry_t4ZTo">
+          <text><![CDATA["AUTO_REJECTED"]]></text>
+        </outputEntry>
+      </rule>
+      <rule>
+        <inputEntry id="inputEntry_eHMI2">
+          <text><![CDATA[<=1000.0]]></text>
+        </inputEntry>
+        <outputEntry id="outputEntry_xMrOf">
+          <text><![CDATA["AUTO_APPROVED"]]></text>
+        </outputEntry>
+      </rule>
+      <rule>
+        <inputEntry id="inputEntry_23qLl">
+          <text><![CDATA[-]]></text>
+        </inputEntry>
+        <outputEntry id="outputEntry_60Ugo">
+          <text><![CDATA["MANUAL_APPROVAL"]]></text>
+        </outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+</definitions>

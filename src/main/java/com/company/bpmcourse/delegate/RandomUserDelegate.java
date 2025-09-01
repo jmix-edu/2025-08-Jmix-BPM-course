@@ -5,7 +5,6 @@ import io.jmix.core.DataManager;
 import io.jmix.core.security.SystemAuthenticator;
 import org.flowable.engine.delegate.DelegateExecution;
 import org.flowable.engine.delegate.JavaDelegate;
-import org.hsqldb.scriptio.ScriptReaderText;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;

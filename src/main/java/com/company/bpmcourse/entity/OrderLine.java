@@ -4,6 +4,7 @@ import io.jmix.core.DeletePolicy;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.OnDeleteInverse;
 import io.jmix.core.metamodel.annotation.JmixEntity;
+import io.jmix.core.metamodel.annotation.JmixProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 
@@ -11,7 +12,6 @@ import java.util.UUID;
 
 @JmixEntity
 @Table(name = "ORDER_LINE", indexes = {
-        @Index(name = "IDX_ORDER_LINE_PIZZA_ITEM", columnList = "PIZZA_ITEM_ID"),
         @Index(name = "IDX_ORDER_LINE_PIZZA_EATER", columnList = "PIZZA_EATER_ID"),
         @Index(name = "IDX_ORDER_LINE_PIZZA_ORDER", columnList = "PIZZA_ORDER_ID")
 })
@@ -22,14 +22,13 @@ public class OrderLine {
     @Id
     private UUID id;
 
-    @JoinColumn(name = "PIZZA_ITEM_ID", nullable = false)
-    @NotNull
-    @OneToOne(fetch = FetchType.LAZY, optional = false)
-    private PizzaItem pizzaItem;
-
     @Column(name = "SPECIAL_REQUIREMENTS")
     @Lob
     private String specialRequirements;
+
+    @JmixProperty
+    @Transient
+    private PizzaItem pizzaItem;
 
     @JoinColumn(name = "PIZZA_EATER_ID", nullable = false)
     @NotNull
@@ -40,6 +39,14 @@ public class OrderLine {
     @JoinColumn(name = "PIZZA_ORDER_ID", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     private PizzaOrder pizzaOrder;
+
+    public PizzaItem getPizzaItem() {
+        return pizzaItem;
+    }
+
+    public void setPizzaItem(PizzaItem pizzaItem) {
+        this.pizzaItem = pizzaItem;
+    }
 
     public PizzaOrder getPizzaOrder() {
         return pizzaOrder;
@@ -63,14 +70,6 @@ public class OrderLine {
 
     public void setSpecialRequirements(String specialRequirements) {
         this.specialRequirements = specialRequirements;
-    }
-
-    public PizzaItem getPizzaItem() {
-        return pizzaItem;
-    }
-
-    public void setPizzaItem(PizzaItem pizzaItem) {
-        this.pizzaItem = pizzaItem;
     }
 
     public UUID getId() {

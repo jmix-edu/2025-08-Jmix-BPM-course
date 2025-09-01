@@ -33,7 +33,7 @@ println "Transaction started at: $date" </script>
       </startEvent>
       <sequenceFlow id="Flow_0q97bgj" sourceRef="Event_1wpf208" targetRef="Activity_13qvfim" />
       <sequenceFlow id="Flow_11roekz" sourceRef="Activity_13qvfim" targetRef="Activity_0jzwcfa" />
-      <sequenceFlow id="Flow_158e6ex" sourceRef="Activity_0jzwcfa" targetRef="Activity_1sspx7f" />
+      <sequenceFlow id="Flow_158e6ex" sourceRef="Activity_0jzwcfa" targetRef="Activity_1ew2ocq" />
       <boundaryEvent id="Event_0ukumqr" attachedToRef="Activity_13qvfim">
         <compensateEventDefinition id="CompensateEventDefinition_03ovof5" />
       </boundaryEvent>
@@ -41,11 +41,10 @@ println "Transaction started at: $date" </script>
         <compensateEventDefinition id="CompensateEventDefinition_0cc7j8g" />
       </boundaryEvent>
       <exclusiveGateway id="Gateway_0697kgf" default="Flow_0jhff2v">
-        <incoming>Flow_071sq7l</incoming>
+        <incoming>Flow_1ruprr7</incoming>
         <outgoing>Flow_10f70ip</outgoing>
         <outgoing>Flow_0jhff2v</outgoing>
       </exclusiveGateway>
-      <sequenceFlow id="Flow_071sq7l" sourceRef="Activity_1sspx7f" targetRef="Gateway_0697kgf" />
       <endEvent id="Event_0wrgq3x">
         <incoming>Flow_10f70ip</incoming>
       </endEvent>
@@ -104,14 +103,15 @@ println "Transaction started at: $date" </script>
           </jmix:springBean>
         </extensionElements>
       </serviceTask>
-      <scriptTask id="Activity_1sspx7f" name="Check error" scriptFormat="groovy">
+      <sequenceFlow id="Flow_1eomosa" sourceRef="Event_0dwt7t6" targetRef="Event_08xt9zo" />
+      <sequenceFlow id="Flow_1ruprr7" sourceRef="Activity_1ew2ocq" targetRef="Gateway_0697kgf" />
+      <scriptTask id="Activity_1ew2ocq" name="Check result" scriptFormat="groovy">
         <incoming>Flow_158e6ex</incoming>
-        <outgoing>Flow_071sq7l</outgoing>
+        <outgoing>Flow_1ruprr7</outgoing>
         <script>boolean transactionResult = debitResult &amp;&amp; creditResult
-println "Transuction result: + $transactionResult"
+println "Transuction result: $transactionResult"
 execution.setVariable("transactionResult", transactionResult)</script>
       </scriptTask>
-      <sequenceFlow id="Flow_1eomosa" sourceRef="Event_0dwt7t6" targetRef="Event_08xt9zo" />
       <association id="Association_0cc40xq" associationDirection="One" sourceRef="Event_0ukumqr" targetRef="Activity_06c4sa3" />
       <association id="Association_1rsth9w" associationDirection="One" sourceRef="Event_125lhx9" targetRef="Activity_0b4tpr0" />
     </subProcess>
@@ -120,11 +120,6 @@ execution.setVariable("transactionResult", transactionResult)</script>
       <incoming>Flow_0k89f48</incoming>
     </endEvent>
     <sequenceFlow id="Flow_0k89f48" sourceRef="Activity_0qqbti1" targetRef="Event_1r54jex" />
-    <boundaryEvent id="Event_02tqc6d" attachedToRef="Activity_0c0jrnk">
-      <outgoing>Flow_0cdtgzl</outgoing>
-      <errorEventDefinition id="ErrorEventDefinition_0opepws" errorRef="fail" />
-    </boundaryEvent>
-    <sequenceFlow id="Flow_0cdtgzl" sourceRef="Event_02tqc6d" targetRef="Activity_13pumlz" />
     <sequenceFlow id="Flow_0y1uinb" sourceRef="Activity_13pumlz" targetRef="Event_1d6hfig" />
     <endEvent id="Event_1d6hfig">
       <incoming>Flow_0y1uinb</incoming>
@@ -138,13 +133,18 @@ def difference = finish.time - begin.time
 println "Transaction completed in: $difference millis"  </script>
     </scriptTask>
     <scriptTask id="Activity_13pumlz" name="Failure" scriptFormat="groovy">
-      <incoming>Flow_0cdtgzl</incoming>
+      <incoming>Flow_1glo1i7</incoming>
       <outgoing>Flow_0y1uinb</outgoing>
       <script>def finish = new Date()
 def difference = finish.time - begin.time
 println "Transaction failed in: $difference millis"  </script>
     </scriptTask>
     <sequenceFlow id="Flow_0espk9g" sourceRef="Activity_0cbecxl" targetRef="Activity_0c0jrnk" />
+    <boundaryEvent id="Event_1agoqu2" attachedToRef="Activity_0c0jrnk">
+      <outgoing>Flow_1glo1i7</outgoing>
+      <errorEventDefinition id="ErrorEventDefinition_16xe2xz" errorRef="fail" />
+    </boundaryEvent>
+    <sequenceFlow id="Flow_1glo1i7" sourceRef="Event_1agoqu2" targetRef="Activity_13pumlz" />
   </process>
   <error id="fail" name="Fail" errorCode="fail" />
   <error id="service_fail" name="Service fail" errorCode="service_fail" />
@@ -192,9 +192,8 @@ println "Transaction failed in: $difference millis"  </script>
         <omgdc:Bounds x="730" y="190" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1fbib9g_di" bpmnElement="Activity_1sspx7f">
-        <omgdc:Bounds x="840" y="50" width="100" height="80" />
-        <bpmndi:BPMNLabel />
+      <bpmndi:BPMNShape id="Activity_014kwoe_di" bpmnElement="Activity_1ew2ocq">
+        <omgdc:Bounds x="850" y="50" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_1omlcfr_di" bpmnElement="Event_125lhx9">
         <omgdc:Bounds x="692" y="112" width="36" height="36" />
@@ -212,11 +211,7 @@ println "Transaction failed in: $difference millis"  </script>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_158e6ex_di" bpmnElement="Flow_158e6ex">
         <omgdi:waypoint x="780" y="90" />
-        <omgdi:waypoint x="840" y="90" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_071sq7l_di" bpmnElement="Flow_071sq7l">
-        <omgdi:waypoint x="940" y="90" />
-        <omgdi:waypoint x="1005" y="90" />
+        <omgdi:waypoint x="850" y="90" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_10f70ip_di" bpmnElement="Flow_10f70ip">
         <omgdi:waypoint x="1055" y="90" />
@@ -250,6 +245,10 @@ println "Transaction failed in: $difference millis"  </script>
         <omgdi:waypoint x="710" y="230" />
         <omgdi:waypoint x="730" y="230" />
       </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1ruprr7_di" bpmnElement="Flow_1ruprr7">
+        <omgdi:waypoint x="950" y="90" />
+        <omgdi:waypoint x="1005" y="90" />
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Event_1r54jex_di" bpmnElement="Event_1r54jex">
         <omgdc:Bounds x="1412" y="150" width="36" height="36" />
       </bpmndi:BPMNShape>
@@ -264,7 +263,7 @@ println "Transaction failed in: $difference millis"  </script>
         <omgdc:Bounds x="1260" y="390" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_17mp1mn_di" bpmnElement="Event_02tqc6d">
+      <bpmndi:BPMNShape id="Event_1dglepd_di" bpmnElement="Event_1agoqu2">
         <omgdc:Bounds x="1122" y="326" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_1dtcsho_di" bpmnElement="Flow_1dtcsho">
@@ -279,11 +278,6 @@ println "Transaction failed in: $difference millis"  </script>
         <omgdi:waypoint x="1360" y="168" />
         <omgdi:waypoint x="1412" y="168" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0cdtgzl_di" bpmnElement="Flow_0cdtgzl">
-        <omgdi:waypoint x="1140" y="362" />
-        <omgdi:waypoint x="1140" y="430" />
-        <omgdi:waypoint x="1260" y="430" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0y1uinb_di" bpmnElement="Flow_0y1uinb">
         <omgdi:waypoint x="1360" y="430" />
         <omgdi:waypoint x="1412" y="430" />
@@ -291,6 +285,11 @@ println "Transaction failed in: $difference millis"  </script>
       <bpmndi:BPMNEdge id="Flow_0espk9g_di" bpmnElement="Flow_0espk9g">
         <omgdi:waypoint x="340" y="168" />
         <omgdi:waypoint x="410" y="168" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1glo1i7_di" bpmnElement="Flow_1glo1i7">
+        <omgdi:waypoint x="1140" y="362" />
+        <omgdi:waypoint x="1140" y="430" />
+        <omgdi:waypoint x="1260" y="430" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

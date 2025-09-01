@@ -15,7 +15,7 @@ import static java.lang.Thread.sleep;
 public class AccountService {
 
     public static final int MAX_DELAY = 3000;
-    public static final int FAIL_PROBABILITY = 50;
+    public static final int FAIL_PROBABILITY = 30;
     private static final Logger log = LoggerFactory.getLogger(AccountService.class);
     private final DataManager dataManager;
     private final SystemAuthenticator systemAuthenticator;
@@ -26,7 +26,9 @@ public class AccountService {
     }
 
     public boolean debit(String owner, long amountToDebit) {
+        log.info("Owner - debit: {}", owner);
         delay();
+
         if (failure()) {
             return false;
         }
@@ -54,6 +56,7 @@ public class AccountService {
     }
 
     public boolean credit(String owner, long amountToCredit) {
+        log.info("Owner - credit: {}", owner);
         delay();
         if (failure()) {
             return false;

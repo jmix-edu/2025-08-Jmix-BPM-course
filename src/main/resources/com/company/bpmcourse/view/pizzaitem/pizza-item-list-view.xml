@@ -1,25 +1,16 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <view xmlns="http://jmix.io/schema/flowui/view"
-      xmlns:c="http://jmix.io/schema/flowui/jpql-condition"
       title="msg://pizzaItemListView.title"
       focusComponent="pizzaItemsDataGrid">
     <data>
         <collection id="pizzaItemsDc"
                     class="com.company.bpmcourse.entity.PizzaItem">
-            <fetchPlan extends="_base">
-                <property name="recipe" fetchPlan="_base"/>
-            </fetchPlan>
-            <loader id="pizzaItemsDl" readOnly="true">
-                <query>
-                    <![CDATA[select e from PizzaItem e]]>
-                </query>
-            </loader>
+            <loader id="pizzaItemsDl" readOnly="true"/>
         </collection>
     </data>
     <facets>
         <dataLoadCoordinator auto="true"/>
         <urlQueryParameters>
-            <genericFilter component="genericFilter"/>
             <pagination component="pagination"/>
         </urlQueryParameters>
     </facets>
@@ -28,14 +19,9 @@
         <action id="discardAction" type="lookup_discard"/>
     </actions>
     <layout>
-        <genericFilter id="genericFilter"
-                       dataLoader="pizzaItemsDl">
-            <properties include=".*"/>
-        </genericFilter>
         <hbox id="buttonsPanel" classNames="buttons-panel">
-            <button id="createButton" action="pizzaItemsDataGrid.createAction"/>
-            <button id="editButton" action="pizzaItemsDataGrid.editAction"/>
-            <button id="removeButton" action="pizzaItemsDataGrid.removeAction"/>
+            <button id="readButton" action="pizzaItemsDataGrid.readAction"/>
+            <button id="refreshButton" action="pizzaItemsDataGrid.refreshAction"/>
             <simplePagination id="pagination" dataLoader="pizzaItemsDl"/>
         </hbox>
         <dataGrid id="pizzaItemsDataGrid"
@@ -44,9 +30,8 @@
                   dataContainer="pizzaItemsDc"
                   columnReorderingAllowed="true">
             <actions>
-                <action id="createAction" type="list_create"/>
-                <action id="editAction" type="list_edit"/>
-                <action id="removeAction" type="list_remove"/>
+                <action id="readAction" type="list_read"/>
+                <action id="refreshAction" type="list_refresh"/>
             </actions>
             <columns resizable="true">
                 <column property="name"/>

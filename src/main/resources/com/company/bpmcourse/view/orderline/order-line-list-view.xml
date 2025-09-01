@@ -7,7 +7,6 @@
         <collection id="orderLinesDc"
                     class="com.company.bpmcourse.entity.OrderLine">
             <fetchPlan extends="_base">
-                <property name="pizzaItem" fetchPlan="_base"/>
                 <property name="pizzaEater" fetchPlan="_instance_name"/>
             </fetchPlan>
             <loader id="orderLinesDl" readOnly="true">
@@ -48,7 +47,6 @@
                 <action id="removeAction" type="list_remove"/>
             </actions>
             <columns resizable="true">
-                <column property="pizzaItem"/>
                 <column property="specialRequirements"/>
                 <column property="pizzaEater"/>
             </columns>

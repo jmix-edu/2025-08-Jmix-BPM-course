@@ -29,6 +29,8 @@ repositories {
 }
 
 dependencies {
+    implementation 'org.springframework.kafka:spring-kafka:3.3.3'
+
     implementation 'io.jmix.quartz:jmix-quartz-flowui-starter'
     implementation 'io.jmix.quartz:jmix-quartz-starter'
 
@@ -57,7 +59,6 @@ dependencies {
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
     }
     testImplementation 'io.jmix.flowui:jmix-flowui-test-assist'
-    implementation 'org.hsqldb:hsqldb'
     implementation 'org.postgresql:postgresql'
 }
 

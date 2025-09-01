@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:flowable="http://flowable.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:jmix="http://jmix.io/schema/bpm/bpmn" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.flowable.org/processdef" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL http://www.omg.org/spec/BPMN/2.0/20100501/BPMN20.xsd">
+  <process id="additional-datstore-test" name="Additional datstore test" isExecutable="true">
+    <startEvent id="startEvent1">
+      <extensionElements>
+        <jmix:processVariables>
+          <jmix:processVariable name="pizzaItems" type="entity-list">
+            <jmix:processVariableProperty name="entityName" value="PizzaItem" />
+          </jmix:processVariable>
+        </jmix:processVariables>
+      </extensionElements>
+      <outgoing>Flow_0gfg4x7</outgoing>
+    </startEvent>
+    <sequenceFlow id="Flow_0gfg4x7" sourceRef="startEvent1" targetRef="Activity_0jdyn6l" />
+    <sequenceFlow id="Flow_0on9rxg" sourceRef="Activity_0jdyn6l" targetRef="Activity_0b9ivh9" />
+    <endEvent id="Event_1rd66xa">
+      <incoming>Flow_0dmfe2v</incoming>
+    </endEvent>
+    <sequenceFlow id="Flow_0dmfe2v" sourceRef="Activity_0b9ivh9" targetRef="Event_1rd66xa" />
+    <scriptTask id="Activity_0b9ivh9" name="Print recepies" scriptFormat="groovy">
+      <incoming>Flow_0on9rxg</incoming>
+      <outgoing>Flow_0dmfe2v</outgoing>
+      <multiInstanceLoopCharacteristics flowable:collection="pizzaItems" flowable:elementVariable="pizzaItems_item" jmix:collectionSource="processVariable" jmix:collectionValue="pizzaItems" />
+      <script>println "Pizza from variable name: $pizzaItems_item.name, price is: $pizzaItems_item.price and recipe is: $pizzaItems_item.recipe.name"</script>
+    </scriptTask>
+    <serviceTask id="Activity_0jdyn6l" name="Load pizzas" flowable:expression="${pizzaService.getPizzaItems()}" flowable:resultVariable="pizzaItems" jmix:taskType="springBean" jmix:beanName="pizzaService">
+      <extensionElements>
+        <jmix:springBean beanName="pizzaService" methodName="getPizzaItems" />
+      </extensionElements>
+      <incoming>Flow_0gfg4x7</incoming>
+      <outgoing>Flow_0on9rxg</outgoing>
+    </serviceTask>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_process">
+    <bpmndi:BPMNPlane id="BPMNPlane_process" bpmnElement="additional-datstore-test">
+      <bpmndi:BPMNShape id="BPMNShape_startEvent1" bpmnElement="startEvent1">
+        <omgdc:Bounds x="150" y="150" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1rd66xa_di" bpmnElement="Event_1rd66xa">
+        <omgdc:Bounds x="562" y="150" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_12akmmd_di" bpmnElement="Activity_0b9ivh9">
+        <omgdc:Bounds x="400" y="128" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0zyw7rz_di" bpmnElement="Activity_0jdyn6l">
+        <omgdc:Bounds x="240" y="128" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0gfg4x7_di" bpmnElement="Flow_0gfg4x7">
+        <omgdi:waypoint x="186" y="168" />
+        <omgdi:waypoint x="240" y="168" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0on9rxg_di" bpmnElement="Flow_0on9rxg">
+        <omgdi:waypoint x="340" y="168" />
+        <omgdi:waypoint x="400" y="168" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0dmfe2v_di" bpmnElement="Flow_0dmfe2v">
+        <omgdi:waypoint x="500" y="168" />
+        <omgdi:waypoint x="562" y="168" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

@@ -6,10 +6,9 @@
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd"
         objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS">
     <changeSet id="1" author="bpm-course">
-        <addColumn tableName="PIZZA_ORDER">
-            <column name="CANCELLED" type="BOOLEAN"/>
-        </addColumn>
-
-        <addNotNullConstraint columnName="CANCELLED" defaultNullValue="false" tableName="PIZZA_ORDER"/>
+        <dropTable cascadeConstraints="true" tableName="pizza_item"/>
+    </changeSet>
+    <changeSet id="2" author="bpm-course">
+        <dropColumn columnName="pizza_item_id" tableName="order_line"/>
     </changeSet>
 </databaseChangeLog>
